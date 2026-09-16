@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Petualangan di Negeri Dongeng</title>
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --secondary: #f5a623;
+      --success: #7ed321;
+      --bg: #eef2f5;
+      --card-bg: #ffffff;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .game-container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 650px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .screen { display: none; }
+    .active { display: block; }
+
+    /* Buttons & Inputs */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0 20px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    .btn-option {
+      background-color: #f0f4f8;
+      color: #333;
+      text-align: left;
+      border: 2px solid #dcdfe6;
+    }
+    .btn-option:hover { background-color: #e2e8f0; }
+
+    /* Game HUD */
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
+    .combo-badge {
+      color: #e67e22;
+      animation: pulse 0.5s infinite alternate;
+    }
+
+    /* Reading Stimulus Box */
+    .stimulus-box {
+      background-color: #fff9db;
+      border-left: 5px solid #f1c40f;
+      padding: 14px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    /* Feedback & Explanation */
+    .feedback-box {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+    }
+    .feedback-correct { background-color: #d4edda; color: #155724; }
+    .feedback-wrong { background-color: #f8d7da; color: #721c24; }
+
+    /* Dashboard Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+
+<div class="game-container">
+
+  <!-- SCREEN 1: START & MISI -->
+  <div id="screen-start" class="screen active">
+    <h2>🏰 Petualangan di Negeri Dongeng</h2>
+    <label for="player-name">Masukkan Namamu, Petualang:</label>
+    <input type="text" id="player-name" placeholder="Nama lengkap/panggilan...">
+
+    <p>Pilih Misi Belajarmu:</p>
+    <button onclick="startGame(10, '🌱 Misi Pemula')">🌱 Misi Pemula (10 Soal)</button>
+    <button onclick="startGame(15, '⭐ Misi Petualang')">⭐ Misi Petualang (15 Soal)</button>
+    <button onclick="startGame(20, '🏆 Misi Hebat')">🏆 Misi Hebat (20 Soal)</button>
+    <button onclick="startGame(25, '👑 Misi Master Dongeng')">👑 Misi Master Dongeng (25 Soal)</button>
+    <hr style="margin: 20px 0;">
+    <button style="background-color: #7f8c8d;" onclick="showDashboard()">👩‍🏫 Menu Guru / Orang Tua</button>
+  </div>
+
+  <!-- SCREEN 2: GAMEPLAY -->
+  <div id="screen-game" class="screen">
+    <div class="hud">
+      <span id="hud-progress">Soal: 1/10</span>
+      <span id="hud-score">Poin: 0 ⭐</span>
+      <span id="hud-combo" class="combo-badge"></span>
+    </div>
+
+    <!-- Stimulus Bacaan -->
+    <div id="stimulus-container" class="stimulus-box">
+      <strong>📚 Baca Cerita!</strong>
+      <p id="stimulus-text"></p>
+    </div>
+
+    <!-- Pertanyaan -->
+    <h3 id="question-text"></h3>
+
+    <!-- Area Answer (PG atau Isian) -->
+    <div id="answers-container"></div>
+
+    <!-- Feedback & Pembahasan -->
+    <div id="feedback-container" class="feedback-box">
+      <div id="feedback-title" style="font-weight: bold; margin-bottom: 5px;"></div>
+      <div id="feedback-explanation"></div>
+      <button id="btn-next" style="margin-top: 10px;" onclick="nextQuestion()">Lanjut ➔</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: RESULT & BADGE -->
+  <div id="screen-result" class="screen" style="text-align: center;">
+    <h2>🎉 Petualangan Selesai!</h2>
+    <p id="result-player"></p>
+    <h1 id="result-score" style="color: var(--primary);"></h1>
+    <h3 id="result-badge"></h3>
+    <p id="result-stats"></p>
+    <button onclick="showStart()">Main Lagi 🔄</button>
+  </div>
+
+  <!-- SCREEN 4: DASHBOARD GURU/ORANG TUA -->
+  <div id="screen-dashboard" class="screen">
+    <h2>📊 Hasil Belajar Siswa</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Misi</th>
+          <th>Benar/Total</th>
+          <th>Nilai</th>
+          <th>Lencana</th>
+        </tr>
+      </thead>
+      <tbody id="dashboard-rows">
+        <!-- Dynamic Content -->
+      </tbody>
+    </table>
+    <button style="margin-top: 20px;" onclick="showStart()">⬅️ Kembali ke Menu Utama</button>
+  </div>
+
+</div>
+
+<script>
+  // BANK SOAL (Dapat ditambah hingga 60-100 soal dengan variasi tipe)
+  const questionBank = [
+    {
+      type: "pg",
+      category: "Masalah Cerita",
+      stimulus: "Kancil menemukan tempayan berisi sedikit air. Ia memasukkan kerikil satu per satu hingga permukaan air naik.",
+      question: "Apa masalah utama yang dihadapi Kancil?",
+      options: [
+        "Kancil tidak menemukan makanan",
+        "Kancil tidak dapat menjangkau air di dasar tempayan",
+        "Kancil kehilangan kerikilnya",
+        "Kancil tersesat di dalam hutan"
+      ],
+      answer: 1,
+      explanation: "Kancil kesulitan menjangkau air karena ukurannya sedikit dan berada di bagian bawah tempayan."
+    },
+    {
+      type: "pg",
+      category: "Sifat Tokoh",
+      stimulus: "Cici Kelinci selalu membagi hasil panen wortelnya kepada tetangga yang membutuhkan, meskipun sisa untuk dirinya menjadi sedikit.",
+      question: "Apa sifat tokoh Cici Kelinci dalam cerita di atas?",
+      options: ["Pemaaf", "Dermawan dan Peduli", "Pemberani", "Hemat"],
+      answer: 1,
+      explanation: "Cici memiliki sifat dermawan dan peduli karena suka membagi makanannya kepada sesama."
+    },
+    {
+      type: "tf",
+      category: "Benar-Salah",
+      stimulus: "Serigala berpura-pura menjadi nenek Domba agar bisa masuk ke dalam rumah. Namun, suara serigala yang serak membuat Domba curiga.",
+      question: "Benar atau Salah: Domba langsung percaya bahwa serigala adalah neneknya.",
+      options: ["Benar", "Salah"],
+      answer: 1,
+      explanation: "Salah, karena Domba curiga melihat suara serigala yang serak."
+    },
+    {
+      type: "pg",
+      category: "Amanat",
+      stimulus: "Kura-kura terus berjalan dengan sabar tanpa berhenti, hingga akhirnya ia berhasil melewati Kelinci yang tertidur lelap di tengah perlombaan.",
+      question: "Apa amanat/pesan moral dari dongeng tersebut?",
+      options: [
+        "Jangan suka berlari cepat",
+        "Ketekunan dan kesabaran akan membuahkan hasil",
+        "Tidur siang sangat penting",
+        "Kelinci adalah hewan yang sombong"
+      ],
+      answer: 1,
+      explanation: "Pesan utama dongeng ini adalah sifat pantang menyerah dan tekun dapat mengalahkan kesombongan."
+    },
+    {
+      type: "short",
+      category: "Latar Tempat",
+      stimulus: "Di tengah Hutan Amarta yang lebat, burung-burung berkicau menyambut terbitnya matahari.",
+      question: "Di manakah latar tempat terjadinya cerita tersebut?",
+      answer: "Hutan Amarta",
+      explanation: "Latar tempat disebutkan secara tersurat yaitu 'Hutan Amarta'."
+    }
+  ];
+
+  // State Game
+  let currentPlayer = "";
+  let selectedMission = "";
+  let activeQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let combo = 0;
+  let correctCount = 0;
+  let totalTarget = 0;
+  let learningLogs = [];
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  function showStart() { showScreen('screen-start'); }
+
+  function startGame(questionCount, missionName) {
+    const nameInput = document.getElementById('player-name').value.trim();
+    if (!nameInput) {
+      alert("Silakan masukkan namamu terlebih dahulu!");
+      return;
+    }
+
+    currentPlayer = nameInput;
+    selectedMission = missionName;
+    totalTarget = Math.min(questionCount, questionBank.length); // Menyesuaikan jika bank soal kurang dari target
+    
+    // Acak Soal (Fisher-Yates Shuffle)
+    let shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+    activeQuestions = shuffled.slice(0, totalTarget);
+
+    currentIndex = 0;
+    score = 0;
+    combo = 0;
+    correctCount = 0;
+
+    showScreen('screen-game');
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    document.getElementById('feedback-container').style.display = 'none';
+    const q = activeQuestions[currentIndex];
+
+    // HUD Update
+    document.getElementById('hud-progress').innerText = `Soal: ${currentIndex + 1}/${totalTarget}`;
+    document.getElementById('hud-score').innerText = `Poin: ${score} ⭐`;
+    document.getElementById('hud-combo').innerText = combo >= 3 ? `🔥 Combo x${combo}!` : '';
+
+    // Stimulus & Question
+    document.getElementById('stimulus-text').innerText = q.stimulus;
+    document.getElementById('question-text').innerText = `${currentIndex + 1}. ${q.question}`;
+
+    const container = document.getElementById('answers-container');
+    container.innerHTML = '';
+
+    // Render Jawaban (Pilihan Ganda / Benar-Salah / Isian)
+    if (q.type === 'pg' || q.type === 'tf') {
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(idx);
+        container.appendChild(btn);
+      });
+    } else if (q.type === 'short') {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'short-answer';
+      input.placeholder = 'Ketik jawabanmu di sini...';
+      
+      const submitBtn = document.createElement('button');
+      submitBtn.innerText = 'Kirim Jawaban';
+      submitBtn.onclick = () => checkAnswer(document.getElementById('short-answer').value);
+      
+      container.appendChild(input);
+      container.appendChild(submitBtn);
+    }
+  }
+
+  function checkAnswer(userAns) {
+    const q = activeQuestions[currentIndex];
+    let isCorrect = false;
+
+    if (q.type === 'pg' || q.type === 'tf') {
+      isCorrect = (userAns === q.answer);
+    } else if (q.type === 'short') {
+      isCorrect = (userAns.trim().toLowerCase() === q.answer.toLowerCase());
+    }
+
+    const feedbackBox = document.getElementById('feedback-container');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackExp = document.getElementById('feedback-explanation');
+    
+    // Disable semua tombol opsi
+    document.querySelectorAll('#answers-container button, #answers-container input').forEach(el => el.disabled = true);
+
+    if (isCorrect) {
+      combo++;
+      correctCount++;
+      let gainedScore = 10 + (combo >= 3 ? 5 : 0); // Bonus combo
+      score += gainedScore;
+
+      feedbackBox.className = 'feedback-box feedback-correct';
+      feedbackTitle.innerText = `🎉 Benar! (+${gainedScore} ⭐)`;
+    } else {
+      combo = 0; // Reset combo
+      feedbackBox.className = 'feedback-box feedback-wrong';
+      feedbackTitle.innerText = `💡 Hampir Benar!`;
+    }
+
+    feedbackExp.innerText = q.explanation;
+    feedbackBox.style.display = 'block';
+
+    document.getElementById('hud-score').innerText = `Poin: ${score} ⭐`;
+    document.getElementById('hud-combo').innerText = combo >= 3 ? `🔥 Combo x${combo}!` : '';
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < totalTarget) {
+      renderQuestion();
+    } else {
+      finishGame();
+    }
+  }
+
+  function finishGame() {
+    showScreen('screen-result');
+    const finalScore = Math.round((correctCount / totalTarget) * 100);
+    let badge = "";
+
+    if (finalScore >= 90) badge = "👑 Master Dongeng";
+    else if (finalScore >= 75) badge = "🥇 Ahli Unsur Dongeng";
+    else if (finalScore >= 60) badge = "🥈 Penyelidik Cerita";
+    else badge = "🥉 Pembaca Dongeng";
+
+    document.getElementById('result-player').innerText = `Hebat, ${currentPlayer}!`;
+    document.getElementById('result-score').innerText = `Nilai: ${finalScore} (Poin: ${score} ⭐)`;
+    document.getElementById('result-badge').innerText = `Lencana Diperoleh: ${badge}`;
+    document.getElementById('result-stats').innerText = `Menjawab benar ${correctCount} dari ${totalTarget} soal.`;
+
+    // Simpan ke Rekap Guru/Orang Tua
+    learningLogs.push({
+      name: currentPlayer,
+      mission: selectedMission,
+      scoreText: `${correctCount}/${totalTarget}`,
+      grade: finalScore,
+      badge: badge
+    });
+  }
+
+  function showDashboard() {
+    showScreen('screen-dashboard');
+    const tbody = document.getElementById('dashboard-rows');
+    tbody.innerHTML = '';
+
+    if (learningLogs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5">Belum ada data permainan.</td></tr>';
+      return;
+    }
+
+    learningLogs.forEach(log => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${log.name}</td>
+        <td>${log.mission}</td>
+        <td>${log.scoreText}</td>
+        <td><strong>${log.grade}</strong></td>
+        <td>${log.badge}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+</script>
+
+</body>
+  </html>
+  
