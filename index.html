@@ -4,255 +4,382 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Petualangan di Negeri Dongeng</title>
+  <!-- Font Ceria khas Anak-anak -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --primary: #4a90e2;
-      --secondary: #f5a623;
-      --success: #7ed321;
-      --bg: #eef2f5;
+      --sky-blue: #70d6ff;
+      --pink-bubble: #ff70a6;
+      --orange-sun: #ff9770;
+      --yellow-butter: #ffd670;
+      --mint-green: #a8ffb2;
+      --purple-candy: #e0aaff;
       --card-bg: #ffffff;
+      --text-color: #2b2d42;
     }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Fredoka', 'Segoe UI', cursive, sans-serif;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
+      background-color: var(--sky-blue);
+      /* Latar Awan & Cerita */
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 20%);
       margin: 0;
-      padding: 20px;
+      padding: 20px 10px;
       display: flex;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text-color);
     }
+
     .game-container {
       background: var(--card-bg);
       width: 100%;
-      max-width: 650px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      padding: 24px;
-      box-sizing: border-box;
+      max-width: 680px;
+      border-radius: 28px;
+      border: 5px solid #2b2d42;
+      box-shadow: 0 12px 0px #2b2d42;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
     }
+
     .screen { display: none; }
     .active { display: block; }
 
-    /* Buttons & Inputs */
+    /* Header & Judul Game */
+    h1, h2, h3 {
+      text-align: center;
+      margin-top: 0;
+      color: #2b2d42;
+      text-shadow: 2px 2px 0px #fff;
+    }
+
+    .game-title {
+      font-size: 32px;
+      color: var(--pink-bubble);
+      -webkit-text-stroke: 1.5px #2b2d42;
+      text-shadow: 3px 3px 0px var(--yellow-butter);
+      margin-bottom: 20px;
+    }
+
+    /* Input & Labels */
+    label {
+      font-size: 18px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+
     input[type="text"] {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0 20px 0;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 16px;
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 4px solid #2b2d42;
+      border-radius: 16px;
+      font-size: 18px;
+      background-color: #fff8e7;
+      outline: none;
+      transition: transform 0.1s;
     }
+    input[type="text"]:focus {
+      transform: scale(1.02);
+      border-color: var(--pink-bubble);
+    }
+
+    /* Tombol Style 3D Kartun */
     button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2b2d42;
+      background-color: var(--yellow-butter);
+      border: 4px solid #2b2d42;
+      border-radius: 18px;
+      padding: 14px 20px;
       cursor: pointer;
       width: 100%;
-      margin-bottom: 10px;
-      transition: background 0.2s;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 0px #2b2d42;
+      transition: all 0.1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    button:hover { opacity: 0.9; }
-    .btn-option {
-      background-color: #f0f4f8;
-      color: #333;
-      text-align: left;
-      border: 2px solid #dcdfe6;
-    }
-    .btn-option:hover { background-color: #e2e8f0; }
 
-    /* Game HUD */
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0px #2b2d42;
+      background-color: #ffe08a;
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0px #2b2d42;
+    }
+
+    .btn-mission-1 { background-color: var(--mint-green); }
+    .btn-mission-2 { background-color: var(--yellow-butter); }
+    .btn-mission-3 { background-color: var(--orange-sun); color: #fff; }
+    .btn-mission-4 { background-color: var(--pink-bubble); color: #fff; }
+
+    .btn-option {
+      background-color: #f0f7ff;
+      text-align: left;
+      justify-content: flex-start;
+      font-size: 16px;
+      padding: 12px 18px;
+      border-radius: 14px;
+    }
+    .btn-option:hover {
+      background-color: var(--purple-candy);
+    }
+
+    /* HUD / Papan Poin */
     .hud {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-weight: bold;
+      background: #fdf0d5;
+      border: 3px solid #2b2d42;
+      padding: 10px 16px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 700;
     }
+
+    .hud-chip {
+      background: white;
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 2px solid #2b2d42;
+    }
+
     .combo-badge {
-      color: #e67e22;
-      animation: pulse 0.5s infinite alternate;
+      color: #d90429;
+      font-size: 20px;
+      animation: bounce 0.4s infinite alternate;
     }
 
-    /* Reading Stimulus Box */
+    /* Kotak Bacaan (Stimulus) */
     .stimulus-box {
-      background-color: #fff9db;
-      border-left: 5px solid #f1c40f;
-      padding: 14px;
-      border-radius: 4px;
-      margin-bottom: 16px;
-      font-size: 15px;
-      line-height: 1.5;
+      background-color: #fff9e6;
+      border: 4px dashed var(--orange-sun);
+      padding: 16px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      font-size: 16px;
+      line-height: 1.6;
+      position: relative;
     }
 
-    /* Feedback & Explanation */
+    .stimulus-header {
+      display: inline-block;
+      background-color: var(--orange-sun);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    /* Feedback Box */
     .feedback-box {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 4px solid #2b2d42;
       display: none;
+      animation: popIn 0.3s ease;
     }
-    .feedback-correct { background-color: #d4edda; color: #155724; }
-    .feedback-wrong { background-color: #f8d7da; color: #721c24; }
+    .feedback-correct { background-color: var(--mint-green); }
+    .feedback-wrong { background-color: #ffadad; }
 
-    /* Dashboard Table */
+    /* Dashboard Tabel Guru/Ortu */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid #2b2d42;
     }
     th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
+      border: 1px solid #2b2d42;
+      padding: 10px 8px;
       text-align: center;
+      font-size: 15px;
     }
-    th { background-color: #f2f2f2; }
+    th { background-color: var(--yellow-butter); }
+
+    /* Animasi */
+    @keyframes bounce {
+      from { transform: scale(1); }
+      to { transform: scale(1.15); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
 <div class="game-container">
 
-  <!-- SCREEN 1: START & MISI -->
+  <!-- SCREEN 1: MENU UTAMA & PILIH MISI -->
   <div id="screen-start" class="screen active">
-    <h2>🏰 Petualangan di Negeri Dongeng</h2>
-    <label for="player-name">Masukkan Namamu, Petualang:</label>
-    <input type="text" id="player-name" placeholder="Nama lengkap/panggilan...">
+    <h1 class="game-title">🏰 Petualangan di Negeri Dongeng</h1>
+    
+    <div style="text-align: center; margin-bottom: 15px; font-size: 50px;">🦄 📚 ✨</div>
 
-    <p>Pilih Misi Belajarmu:</p>
-    <button onclick="startGame(10, '🌱 Misi Pemula')">🌱 Misi Pemula (10 Soal)</button>
-    <button onclick="startGame(15, '⭐ Misi Petualang')">⭐ Misi Petualang (15 Soal)</button>
-    <button onclick="startGame(20, '🏆 Misi Hebat')">🏆 Misi Hebat (20 Soal)</button>
-    <button onclick="startGame(25, '👑 Misi Master Dongeng')">👑 Misi Master Dongeng (25 Soal)</button>
-    <hr style="margin: 20px 0;">
-    <button style="background-color: #7f8c8d;" onclick="showDashboard()">👩‍🏫 Menu Guru / Orang Tua</button>
+    <label for="player-name">Halo Teman Kecil! Siapa Namamu?</label>
+    <input type="text" id="player-name" placeholder="Ketik namamu di sini ya...">
+
+    <label>Pilih Misi Petualanganmu:</label>
+    <button class="btn-mission-1" onclick="startGame(10, '🌱 Misi Pemula')">🌱 Misi Pemula (10 Soal)</button>
+    <button class="btn-mission-2" onclick="startGame(15, '⭐ Misi Petualang')">⭐ Misi Petualang (15 Soal)</button>
+    <button class="btn-mission-3" onclick="startGame(20, '🏆 Misi Hebat')">🏆 Misi Hebat (20 Soal)</button>
+    <button class="btn-mission-4" onclick="startGame(25, '👑 Misi Master Dongeng')">👑 Misi Master Dongeng (25 Soal)</button>
+
+    <div style="margin-top: 25px;">
+      <button style="background-color: var(--purple-candy);" onclick="showDashboard()">👩‍🏫 Menu Guru / Orang Tua</button>
+    </div>
   </div>
 
   <!-- SCREEN 2: GAMEPLAY -->
   <div id="screen-game" class="screen">
+    <!-- HUD Poin & Progress -->
     <div class="hud">
-      <span id="hud-progress">Soal: 1/10</span>
-      <span id="hud-score">Poin: 0 ⭐</span>
+      <span class="hud-chip" id="hud-progress">📍 Soal 1/10</span>
       <span id="hud-combo" class="combo-badge"></span>
+      <span class="hud-chip" id="hud-score" style="background-color: var(--yellow-butter);">⭐ 0 Poin</span>
     </div>
 
     <!-- Stimulus Bacaan -->
     <div id="stimulus-container" class="stimulus-box">
-      <strong>📚 Baca Cerita!</strong>
-      <p id="stimulus-text"></p>
+      <span class="stimulus-header">📖 Baca Cerita Ini Ya!</span>
+      <p id="stimulus-text" style="margin: 5px 0 0 0;"></p>
     </div>
 
     <!-- Pertanyaan -->
-    <h3 id="question-text"></h3>
+    <h3 id="question-text" style="text-align: left; font-size: 20px; margin-bottom: 15px;"></h3>
 
-    <!-- Area Answer (PG atau Isian) -->
+    <!-- Opsi Jawaban -->
     <div id="answers-container"></div>
 
-    <!-- Feedback & Pembahasan -->
+    <!-- Feedback Jawaban & Pembahasan -->
     <div id="feedback-container" class="feedback-box">
-      <div id="feedback-title" style="font-weight: bold; margin-bottom: 5px;"></div>
-      <div id="feedback-explanation"></div>
-      <button id="btn-next" style="margin-top: 10px;" onclick="nextQuestion()">Lanjut ➔</button>
+      <div id="feedback-title" style="font-size: 20px; font-weight: bold; margin-bottom: 6px;"></div>
+      <div id="feedback-explanation" style="font-size: 16px; line-height: 1.4;"></div>
+      <button id="btn-next" style="margin-top: 14px; background-color: white;" onclick="nextQuestion()">Lanjut Petualangan ➔</button>
     </div>
   </div>
 
-  <!-- SCREEN 3: RESULT & BADGE -->
+  <!-- SCREEN 3: HASIL & LENCANA -->
   <div id="screen-result" class="screen" style="text-align: center;">
-    <h2>🎉 Petualangan Selesai!</h2>
-    <p id="result-player"></p>
-    <h1 id="result-score" style="color: var(--primary);"></h1>
-    <h3 id="result-badge"></h3>
-    <p id="result-stats"></p>
-    <button onclick="showStart()">Main Lagi 🔄</button>
+    <div style="font-size: 60px; margin-bottom: 10px;">🎉 🏆 🎈</div>
+    <h2>Petualangan Selesai!</h2>
+    <p id="result-player" style="font-size: 22px; font-weight: bold; color: var(--pink-bubble);"></p>
+    
+    <div style="background: #fff8e7; border: 3px solid #2b2d42; border-radius: 20px; padding: 15px; margin: 15px 0;">
+      <h1 id="result-score" style="color: var(--orange-sun); font-size: 40px; margin: 0;"></h1>
+      <h3 id="result-badge" style="color: #2b2d42; font-size: 22px; margin: 10px 0 0 0;"></h3>
+    </div>
+    
+    <p id="result-stats" style="font-size: 18px;"></p>
+    <button style="background-color: var(--mint-green);" onclick="showStart()">Main Lagi Yuk! 🔄</button>
   </div>
 
-  <!-- SCREEN 4: DASHBOARD GURU/ORANG TUA -->
+  <!-- SCREEN 4: MENU GURU / ORANG TUA -->
   <div id="screen-dashboard" class="screen">
-    <h2>📊 Hasil Belajar Siswa</h2>
+    <h2>📊 Laporan Belajar Siswa</h2>
     <table>
       <thead>
         <tr>
           <th>Nama</th>
           <th>Misi</th>
-          <th>Benar/Total</th>
+          <th>Benar</th>
           <th>Nilai</th>
           <th>Lencana</th>
         </tr>
       </thead>
       <tbody id="dashboard-rows">
-        <!-- Dynamic Content -->
+        <!-- Hasil Belajar Otomatis Muncul di Sini -->
       </tbody>
     </table>
-    <button style="margin-top: 20px;" onclick="showStart()">⬅️ Kembali ke Menu Utama</button>
+    <button style="margin-top: 20px; background-color: var(--sky-blue);" onclick="showStart()">⬅️ Kembali ke Game</button>
   </div>
 
 </div>
 
 <script>
-  // BANK SOAL (Dapat ditambah hingga 60-100 soal dengan variasi tipe)
+  // BANK SOAL DENGAN VARIASI JENIS
   const questionBank = [
     {
       type: "pg",
-      category: "Masalah Cerita",
       stimulus: "Kancil menemukan tempayan berisi sedikit air. Ia memasukkan kerikil satu per satu hingga permukaan air naik.",
       question: "Apa masalah utama yang dihadapi Kancil?",
       options: [
-        "Kancil tidak menemukan makanan",
-        "Kancil tidak dapat menjangkau air di dasar tempayan",
-        "Kancil kehilangan kerikilnya",
-        "Kancil tersesat di dalam hutan"
+        "🔵 Kancil tidak menemukan makanan",
+        "🟢 Kancil tidak dapat menjangkau air di dasar tempayan",
+        "🟡 Kancil kehilangan kerikilnya",
+        "🔴 Kancil tersesat di dalam hutan"
       ],
       answer: 1,
-      explanation: "Kancil kesulitan menjangkau air karena ukurannya sedikit dan berada di bagian bawah tempayan."
+      explanation: "Kancil kesulitan menjangkau air karena air berada di dasar tempayan yang dalam."
     },
     {
       type: "pg",
-      category: "Sifat Tokoh",
       stimulus: "Cici Kelinci selalu membagi hasil panen wortelnya kepada tetangga yang membutuhkan, meskipun sisa untuk dirinya menjadi sedikit.",
-      question: "Apa sifat tokoh Cici Kelinci dalam cerita di atas?",
-      options: ["Pemaaf", "Dermawan dan Peduli", "Pemberani", "Hemat"],
+      question: "Bagaimanakah sifat Cici Kelinci?",
+      options: ["🔵 Pemaaf", "🟢 Dermawan dan Peduli", "🟡 Pemberani", "🔴 Penakut"],
       answer: 1,
-      explanation: "Cici memiliki sifat dermawan dan peduli karena suka membagi makanannya kepada sesama."
+      explanation: "Cici Kelinci sangat dermawan dan peduli karena suka berbagi makanan kepada teman-temannya."
     },
     {
       type: "tf",
-      category: "Benar-Salah",
-      stimulus: "Serigala berpura-pura menjadi nenek Domba agar bisa masuk ke dalam rumah. Namun, suara serigala yang serak membuat Domba curiga.",
-      question: "Benar atau Salah: Domba langsung percaya bahwa serigala adalah neneknya.",
-      options: ["Benar", "Salah"],
+      stimulus: "Serigala berpura-pura menjadi nenek Domba agar bisa masuk rumah. Namun suaranya yang serak membuat Domba curiga.",
+      question: "Benar atau Salah: Domba langsung percaya bahwa itu adalah neneknya.",
+      options: ["✅ BENAR", "❌ SALAH"],
       answer: 1,
-      explanation: "Salah, karena Domba curiga melihat suara serigala yang serak."
+      explanation: "Salah! Domba tidak langsung percaya karena ia curiga mendengar suara serigala yang serak."
     },
     {
       type: "pg",
-      category: "Amanat",
       stimulus: "Kura-kura terus berjalan dengan sabar tanpa berhenti, hingga akhirnya ia berhasil melewati Kelinci yang tertidur lelap di tengah perlombaan.",
-      question: "Apa amanat/pesan moral dari dongeng tersebut?",
+      question: "Apa pesan moral (amanat) yang bisa kita petik?",
       options: [
-        "Jangan suka berlari cepat",
-        "Ketekunan dan kesabaran akan membuahkan hasil",
-        "Tidur siang sangat penting",
-        "Kelinci adalah hewan yang sombong"
+        "🔵 Tidak boleh berlari cepat",
+        "🟢 Ketekunan dan kesabaran akan membawa keberhasilan",
+        "🟡 Tidur siang itu sangat penting",
+        "🔴 Kelinci adalah hewan tercepat"
       ],
       answer: 1,
-      explanation: "Pesan utama dongeng ini adalah sifat pantang menyerah dan tekun dapat mengalahkan kesombongan."
+      explanation: "Pesan moralnya: Usaha keras dan pantang menyerah akan membuahkan hasil yang manis!"
     },
     {
       type: "short",
-      category: "Latar Tempat",
-      stimulus: "Di tengah Hutan Amarta yang lebat, burung-burung berkicau menyambut terbitnya matahari.",
-      question: "Di manakah latar tempat terjadinya cerita tersebut?",
+      stimulus: "Di tengah Hutan Amarta yang lebat, burung-burung berkicau riang menyambut terbitnya matahari.",
+      question: "Di manakah latar tempat terjadinya cerita di atas?",
       answer: "Hutan Amarta",
-      explanation: "Latar tempat disebutkan secara tersurat yaitu 'Hutan Amarta'."
+      explanation: "Latar tempat cerita tersebut dijelaskan langsung yaitu di 'Hutan Amarta'."
     }
   ];
 
-  // State Game
+  // Game Logic Variables
   let currentPlayer = "";
   let selectedMission = "";
   let activeQuestions = [];
@@ -273,15 +400,15 @@
   function startGame(questionCount, missionName) {
     const nameInput = document.getElementById('player-name').value.trim();
     if (!nameInput) {
-      alert("Silakan masukkan namamu terlebih dahulu!");
+      alert("Isi namamu dulu ya, Petualang Cilik! 😊");
       return;
     }
 
     currentPlayer = nameInput;
     selectedMission = missionName;
-    totalTarget = Math.min(questionCount, questionBank.length); // Menyesuaikan jika bank soal kurang dari target
+    totalTarget = Math.min(questionCount, questionBank.length);
     
-    // Acak Soal (Fisher-Yates Shuffle)
+    // Acak Soal
     let shuffled = [...questionBank].sort(() => 0.5 - Math.random());
     activeQuestions = shuffled.slice(0, totalTarget);
 
@@ -298,19 +425,18 @@
     document.getElementById('feedback-container').style.display = 'none';
     const q = activeQuestions[currentIndex];
 
-    // HUD Update
-    document.getElementById('hud-progress').innerText = `Soal: ${currentIndex + 1}/${totalTarget}`;
-    document.getElementById('hud-score').innerText = `Poin: ${score} ⭐`;
+    // Update HUD
+    document.getElementById('hud-progress').innerText = `📍 Soal ${currentIndex + 1}/${totalTarget}`;
+    document.getElementById('hud-score').innerText = `⭐ ${score} Poin`;
     document.getElementById('hud-combo').innerText = combo >= 3 ? `🔥 Combo x${combo}!` : '';
 
-    // Stimulus & Question
+    // Render Stimulus & Soal
     document.getElementById('stimulus-text').innerText = q.stimulus;
-    document.getElementById('question-text').innerText = `${currentIndex + 1}. ${q.question}`;
+    document.getElementById('question-text').innerText = q.question;
 
     const container = document.getElementById('answers-container');
     container.innerHTML = '';
 
-    // Render Jawaban (Pilihan Ganda / Benar-Salah / Isian)
     if (q.type === 'pg' || q.type === 'tf') {
       q.options.forEach((opt, idx) => {
         const btn = document.createElement('button');
@@ -326,7 +452,9 @@
       input.placeholder = 'Ketik jawabanmu di sini...';
       
       const submitBtn = document.createElement('button');
-      submitBtn.innerText = 'Kirim Jawaban';
+      submitBtn.innerText = 'Kirim Jawaban 🚀';
+      submitBtn.style.backgroundColor = 'var(--orange-sun)';
+      submitBtn.style.color = 'white';
       submitBtn.onclick = () => checkAnswer(document.getElementById('short-answer').value);
       
       container.appendChild(input);
@@ -348,27 +476,27 @@
     const feedbackTitle = document.getElementById('feedback-title');
     const feedbackExp = document.getElementById('feedback-explanation');
     
-    // Disable semua tombol opsi
+    // Nonaktifkan tombol agar tidak bisa diklik ulang
     document.querySelectorAll('#answers-container button, #answers-container input').forEach(el => el.disabled = true);
 
     if (isCorrect) {
       combo++;
       correctCount++;
-      let gainedScore = 10 + (combo >= 3 ? 5 : 0); // Bonus combo
+      let gainedScore = 10 + (combo >= 3 ? 5 : 0);
       score += gainedScore;
 
       feedbackBox.className = 'feedback-box feedback-correct';
-      feedbackTitle.innerText = `🎉 Benar! (+${gainedScore} ⭐)`;
+      feedbackTitle.innerText = `🎉 Yey, Benar! (+${gainedScore} ⭐)`;
     } else {
-      combo = 0; // Reset combo
+      combo = 0;
       feedbackBox.className = 'feedback-box feedback-wrong';
-      feedbackTitle.innerText = `💡 Hampir Benar!`;
+      feedbackTitle.innerText = `💡 Yuk Pelajari Dulu!`;
     }
 
     feedbackExp.innerText = q.explanation;
     feedbackBox.style.display = 'block';
 
-    document.getElementById('hud-score').innerText = `Poin: ${score} ⭐`;
+    document.getElementById('hud-score').innerText = `⭐ ${score} Poin`;
     document.getElementById('hud-combo').innerText = combo >= 3 ? `🔥 Combo x${combo}!` : '';
   }
 
@@ -391,12 +519,12 @@
     else if (finalScore >= 60) badge = "🥈 Penyelidik Cerita";
     else badge = "🥉 Pembaca Dongeng";
 
-    document.getElementById('result-player').innerText = `Hebat, ${currentPlayer}!`;
-    document.getElementById('result-score').innerText = `Nilai: ${finalScore} (Poin: ${score} ⭐)`;
-    document.getElementById('result-badge').innerText = `Lencana Diperoleh: ${badge}`;
-    document.getElementById('result-stats').innerText = `Menjawab benar ${correctCount} dari ${totalTarget} soal.`;
+    document.getElementById('result-player').innerText = `Hebat Sekali, ${currentPlayer}!`;
+    document.getElementById('result-score').innerText = `Nilai: ${finalScore}`;
+    document.getElementById('result-badge').innerText = `Lencana: ${badge}`;
+    document.getElementById('result-stats').innerText = `Kamu berhasil menjawab benar ${correctCount} dari ${totalTarget} soal! Total poinmu ${score} ⭐`;
 
-    // Simpan ke Rekap Guru/Orang Tua
+    // Rekap untuk Guru/Orang Tua
     learningLogs.push({
       name: currentPlayer,
       mission: selectedMission,
@@ -412,14 +540,14 @@
     tbody.innerHTML = '';
 
     if (learningLogs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5">Belum ada data permainan.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5">Belum ada anak yang bermain.</td></tr>';
       return;
     }
 
     learningLogs.forEach(log => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${log.name}</td>
+        <td><strong>${log.name}</strong></td>
         <td>${log.mission}</td>
         <td>${log.scoreText}</td>
         <td><strong>${log.grade}</strong></td>
@@ -431,5 +559,4 @@
 </script>
 
 </body>
-  </html>
-  
+</html>
